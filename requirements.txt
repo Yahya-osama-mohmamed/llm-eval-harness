@@ -1,0 +1,3 @@
+# Runtime. Dev/test extras live in pyproject.toml under [project.optional-dependencies].
+numpy>=1.26
+scipy>=1.11

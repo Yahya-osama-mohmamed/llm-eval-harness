@@ -1,0 +1,39 @@
+{
+  "generated_by": "scripts/validate_statistics.py",
+  "coverage_mean": {
+    "percentile": 0.959,
+    "bca": 0.962
+  },
+  "coverage_kappa": {
+    "percentile": 0.926,
+    "bca": 0.926
+  },
+  "true_kappa": 0.7009911575844476,
+  "null_error_rates": {
+    "m_hypotheses": 20,
+    "alpha": 0.05,
+    "trials": 5000,
+    "familywise_error_uncorrected": 0.6364,
+    "familywise_error_holm": 0.0558,
+    "familywise_error_bh": 0.0566,
+    "theoretical_uncorrected": 0.6415140775914581
+  },
+  "sizing": {
+    "baseline_rate": 0.8,
+    "power": 0.8,
+    "alpha": 0.05,
+    "mde_percentage_points_by_n": {
+      "100": 17.86,
+      "200": 12.27,
+      "500": 7.53,
+      "1000": 5.24,
+      "2000": 3.66,
+      "5000": 2.29,
+      "10000": 1.61
+    },
+    "n_needed_for_1pp": 25583,
+    "n_needed_for_2pp": 6510,
+    "n_needed_for_5pp": 1094
+  },
+  "runtime_seconds": 39.8
+}
