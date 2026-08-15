@@ -30,6 +30,13 @@ __all__ = ["CI", "bootstrap_ci", "paired_bootstrap_diff"]
 
 Method = Literal["percentile", "bca"]
 
+# Below this many distinct bootstrap replicate values, BCa's bias correction is
+# fitting ties rather than skew and the interval is not trustworthy. 30 is a
+# judgement call, chosen well above the ~3 distinct values that produced an
+# interval contradicting its own p-value, and well below what any continuous
+# statistic on a reasonable sample produces.
+_MIN_DISTINCT_FOR_BCA = 30
+
 
 @dataclass(frozen=True)
 class CI:
@@ -107,12 +114,31 @@ def bootstrap_ci(
     if method != "bca":
         raise ValueError(f"unknown method {method!r}")
 
-    # bias correction
-    prop_below = float(np.mean(boot < theta_hat))
-    if prop_below in (0.0, 1.0):
-        # BCa is undefined at the edge; fall back rather than emit inf
+    # BCa is unsafe on a near-degenerate bootstrap distribution. Found the hard
+    # way: a paired hit@10 difference of 298 zeros and two -1s gives a bootstrap
+    # distribution with a handful of distinct values, and the resulting z0 and
+    # acceleration produced an interval that *excluded zero* while the percentile
+    # interval and the bootstrap p-value both said there was nothing there.
+    # Too few distinct values means the bias correction is fitting ties, not skew.
+    if np.unique(boot).size < _MIN_DISTINCT_FOR_BCA:
         lo, hi = np.quantile(boot, [alpha / 2, 1 - alpha / 2])
-        return CI(theta_hat, float(lo), float(hi), confidence, "percentile (bca degenerate)", n_resamples)
+        return CI(
+            theta_hat, float(lo), float(hi), confidence,
+            "percentile (bca unstable: discrete statistic)", n_resamples,
+        )
+
+    # Bias correction, with the mid-p adjustment for ties. Plain P(theta* < hat)
+    # undercounts when many replicates land exactly on the estimate, which biases
+    # z0 for any statistic on a small discrete support.
+    below = float(np.mean(boot < theta_hat))
+    equal = float(np.mean(boot == theta_hat))
+    prop_below = below + 0.5 * equal
+    if prop_below <= 0.0 or prop_below >= 1.0:
+        lo, hi = np.quantile(boot, [alpha / 2, 1 - alpha / 2])
+        return CI(
+            theta_hat, float(lo), float(hi), confidence,
+            "percentile (bca degenerate)", n_resamples,
+        )
     z0 = stats.norm.ppf(prop_below)
 
     # acceleration via jackknife

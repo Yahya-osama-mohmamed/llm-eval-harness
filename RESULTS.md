@@ -47,7 +47,7 @@ independent simulated datasets with a known answer:
 | Statistic | Method | Trials | n | Measured coverage |
 |---|---|---|---|---|
 | Mean of Bernoulli(0.3) | percentile | 1,000 | 120 | **0.959** |
-| Mean of Bernoulli(0.3) | BCa | 1,000 | 120 | **0.962** |
+| Mean of Bernoulli(0.3) | BCa | 1,000 | 120 | **0.958** |
 | Cohen's kappa (true κ = 0.7010) | percentile | 500 | 150 | **0.926** |
 | Cohen's kappa (true κ = 0.7010) | BCa | 500 | 150 | **0.926** |
 
@@ -162,6 +162,18 @@ intervals, so the conclusion is not an artefact of which annotators were drawn.
 
 1. **BCa did not earn its keep** (§2.1); the default is justified by reputation,
    not by measurement in this repo.
+1a. **BCa was actively wrong on a discrete statistic**, found while using this
+   library from the `production-rag` project. A paired hit@10 difference of 298
+   zeros and two −1s gave a bootstrap distribution with about three distinct
+   values; BCa's bias correction fitted those ties rather than any skew and
+   returned an interval that **excluded zero**, while the percentile interval
+   [−0.0167, 0.0000] and the bootstrap p-value (0.27) both correctly said there
+   was nothing there. An interval that contradicts its own p-value is worse than
+   no interval. Fixed two ways: a mid-p adjustment to the bias correction so
+   ties do not skew z0, and a guard that falls back to percentile when the
+   bootstrap distribution has fewer than 30 distinct values. Regression-tested
+   in `tests/test_resample.py`. The mid-p change moved BCa's mean coverage from
+   0.962 to 0.958; kappa coverage was unchanged.
 2. **Kappa intervals under-cover at n=150** (92.6% vs nominal 95%).
 3. **Ties turned out to dominate** (§3.3.3). The plan treated tie policy as a
    reporting detail to mention; it is the largest single lever on the headline

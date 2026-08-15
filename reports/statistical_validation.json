@@ -2,7 +2,7 @@
   "generated_by": "scripts/validate_statistics.py",
   "coverage_mean": {
     "percentile": 0.959,
-    "bca": 0.962
+    "bca": 0.958
   },
   "coverage_kappa": {
     "percentile": 0.926,
@@ -35,5 +35,5 @@
     "n_needed_for_2pp": 6510,
     "n_needed_for_5pp": 1094
   },
-  "runtime_seconds": 39.8
+  "runtime_seconds": 97.2
 }

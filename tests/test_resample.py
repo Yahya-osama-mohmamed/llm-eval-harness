@@ -160,3 +160,53 @@ def test_rejects_bad_input() -> None:
         bootstrap_ci(([1, 2, 3], [1, 2]), lambda a, b: 0.0)
     with pytest.raises(ValueError, match="confidence"):
         bootstrap_ci([1, 2, 3], np.mean, confidence=1.5)
+
+
+# --------------------------------------------------------------------------
+# discrete statistics — the regression this guard exists for
+# --------------------------------------------------------------------------
+
+def test_bca_falls_back_on_a_near_degenerate_difference() -> None:
+    """Regression test from a real failure in the production-rag project.
+
+    A paired hit@10 difference of 298 zeros and two -1s gave a bootstrap
+    distribution with a handful of distinct values. BCa's bias correction fitted
+    those ties rather than any skew and returned an interval that *excluded
+    zero*, while the percentile interval and the bootstrap p-value both said
+    there was nothing there. An interval that contradicts its own p-value is
+    worse than no interval, so BCa now detects this and falls back.
+    """
+    diff = np.zeros(300)
+    diff[:2] = -1.0
+
+    ci = bootstrap_ci(diff, np.mean, n_resamples=4000, method="bca", seed=0)
+    assert "percentile" in ci.method, f"expected a fallback, got {ci.method}"
+    assert not ci.excludes(0.0), "must not claim significance on 2 non-zero items"
+
+    percentile = bootstrap_ci(diff, np.mean, n_resamples=4000, method="percentile", seed=0)
+    assert ci.low == pytest.approx(percentile.low)
+    assert ci.high == pytest.approx(percentile.high)
+
+
+def test_continuous_statistics_still_use_bca() -> None:
+    """The guard must not silently disable BCa for everything it was built for."""
+    rng = np.random.default_rng(3)
+    ci = bootstrap_ci(rng.normal(size=200), np.mean, n_resamples=2000, method="bca")
+    assert ci.method == "bca"
+
+
+def test_binary_data_is_not_degenerate_enough_to_trip_the_guard() -> None:
+    """A plain 0/1 accuracy vector produces plenty of distinct bootstrap means;
+    only near-constant differences should trip it."""
+    rng = np.random.default_rng(5)
+    ci = bootstrap_ci(rng.binomial(1, 0.4, size=200), np.mean, n_resamples=2000, method="bca")
+    assert ci.method == "bca"
+
+
+def test_midp_bias_correction_handles_ties() -> None:
+    """With ties at the estimate, plain P(theta* < hat) undercounts and biases
+    z0. The mid-p form splits the tied mass, keeping the interval centred."""
+    rng = np.random.default_rng(11)
+    data = rng.integers(0, 4, size=400).astype(float)
+    ci = bootstrap_ci(data, np.mean, n_resamples=3000, method="bca")
+    assert ci.low < ci.estimate < ci.high
