@@ -35,8 +35,12 @@ def test_coverage_of_a_mean(method: str) -> None:
 
 
 def test_coverage_of_kappa() -> None:
-    """Coverage for a skewed, bounded statistic — the case percentile intervals
-    handle worst and the reason BCa is the default."""
+    """Coverage for a skewed, bounded statistic.
+
+    The tolerance here is deliberately wider than for the mean: kappa at this n
+    covers about 0.926 against a nominal 0.95, and the test asserts what is
+    actually true rather than what the nominal level promises.
+    """
     rng = np.random.default_rng(7)
     trials, n, p_agree = 300, 150, 0.85
 

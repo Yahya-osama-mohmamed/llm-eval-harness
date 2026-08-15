@@ -4,10 +4,17 @@ Every number this harness reports carries an interval, because the whole claim o
 the project is that judge scores are measurements. A measurement without an
 interval is a number with an opinion attached.
 
-BCa is the default. Percentile intervals are fine for a mean and visibly wrong
-for a skewed statistic like kappa near its ceiling, where the sampling
-distribution is not symmetric — which is precisely the regime a good judge lands
-in. BCa corrects for both bias and skew at the cost of a jackknife pass.
+BCa is the default, on theory rather than on evidence from this repository. The
+argument for it is that percentile intervals are fine for a mean but skewed for a
+bounded statistic like kappa near its ceiling, and BCa corrects bias and skew at
+the cost of a jackknife pass.
+
+That argument is not yet supported here. Measured coverage for kappa at n=150 is
+identical for both methods to three decimals (0.926 against a nominal 0.95 —
+RESULTS.md section 2.1), so BCa currently buys nothing measurable and both
+methods under-cover. Treat small-n kappa intervals as approximate. The default
+stands because BCa is not worse, and its advantage may appear at other n; that is
+an open question, not a settled one.
 """
 
 from __future__ import annotations
