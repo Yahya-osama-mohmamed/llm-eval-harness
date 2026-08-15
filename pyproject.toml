@@ -19,6 +19,9 @@ dev = [
     "scikit-learn>=1.4",   # cross-checks kappa and calibration in tests
     "statsmodels>=0.14",   # cross-checks correction and power in tests
 ]
+data = [
+    "datasets>=2.19",      # only needed to download MT-Bench; the metrics core
+]                          # and every test run without it
 
 [tool.setuptools.packages.find]
 where = ["src"]

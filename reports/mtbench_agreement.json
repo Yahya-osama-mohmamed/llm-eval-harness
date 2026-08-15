@@ -1,0 +1,200 @@
+{
+  "generated_by": "scripts/run_mtbench_experiment.py",
+  "dataset": "lmsys/mt_bench_human_judgments",
+  "dataset_summary": {
+    "n_items": 2400,
+    "n_with_judge": 2400,
+    "n_with_ceiling": 961,
+    "n_human_votes": 3355,
+    "n_distinct_annotators": 65,
+    "judge_inconsistent_rate": 0.15833333333333333
+  },
+  "n_bootstrap": 4000,
+  "with_ties": {
+    "label": "ties kept",
+    "n_items": 961,
+    "raw_agreement": {
+      "human_ceiling": [
+        0.6753381893860562,
+        0.6430801248699272,
+        0.7023933402705516
+      ],
+      "judge_vs_human": [
+        0.6566077003121749,
+        0.6243496357960457,
+        0.6847034339229969
+      ],
+      "ceiling_minus_judge": [
+        0.018730489073881307,
+        -0.014568158168574485,
+        0.048907388137356844
+      ],
+      "gap_excludes_zero": false
+    },
+    "cohens_kappa": {
+      "human_ceiling": [
+        0.49931367539350946,
+        0.45356241587085694,
+        0.5426014549876201
+      ],
+      "judge_vs_human": [
+        0.4735382980842656,
+        0.4279861807504317,
+        0.5181453077152519
+      ],
+      "ceiling_minus_judge": [
+        0.02577537730924384,
+        -0.02418404737380795,
+        0.07240645363588086
+      ],
+      "gap_excludes_zero": false
+    },
+    "gwets_ac1": {
+      "human_ceiling": [
+        0.5196833901158733,
+        0.4737060282046596,
+        0.5621536682500997
+      ],
+      "judge_vs_human": [
+        0.4906963718961977,
+        0.4429745989832325,
+        0.534847235091236
+      ],
+      "ceiling_minus_judge": [
+        0.028987018219675587,
+        -0.0201396307984879,
+        0.07499412858069106
+      ],
+      "gap_excludes_zero": false
+    }
+  },
+  "without_ties": {
+    "label": "ties dropped",
+    "n_items": 546,
+    "raw_agreement": {
+      "human_ceiling": [
+        0.8644688644688645,
+        0.8315018315018315,
+        0.8882783882783882
+      ],
+      "judge_vs_human": [
+        0.8754578754578755,
+        0.8443223443223443,
+        0.8992673992673993
+      ],
+      "ceiling_minus_judge": [
+        -0.01098901098901095,
+        -0.042124542124542086,
+        0.01831501831501825
+      ],
+      "gap_excludes_zero": false
+    },
+    "cohens_kappa": {
+      "human_ceiling": [
+        0.7282485875706215,
+        0.6672840866555674,
+        0.7799715931654857
+      ],
+      "judge_vs_human": [
+        0.7498585172608941,
+        0.6885574932540008,
+        0.8021387604050101
+      ],
+      "ceiling_minus_judge": [
+        -0.021609929690272645,
+        -0.08129954917490732,
+        0.0379140793196135
+      ],
+      "gap_excludes_zero": false
+    },
+    "gwets_ac1": {
+      "human_ceiling": [
+        0.8194734866763177,
+        0.7779908148365727,
+        0.8535457392368333
+      ],
+      "judge_vs_human": [
+        0.8341841177968032,
+        0.794465992008068,
+        0.868658245492971
+      ],
+      "ceiling_minus_judge": [
+        -0.01471063112048554,
+        -0.056151777398458905,
+        0.024328239514146817
+      ],
+      "gap_excludes_zero": false
+    }
+  },
+  "position_bias": {
+    "n_judged_items": 2400,
+    "inconsistent_rate": [
+      0.15833333333333333,
+      0.14416666666666667,
+      0.1725
+    ]
+  },
+  "seed_sensitivity": {
+    "seeds": 10,
+    "ceiling_kappa_range": [
+      0.48113437074019383,
+      0.5067203741077693
+    ],
+    "judge_kappa_range": [
+      0.469087119771077,
+      0.5121471325998381
+    ],
+    "per_seed": [
+      {
+        "seed": 0,
+        "ceiling_kappa": 0.49931367539350946,
+        "judge_kappa": 0.4735382980842656
+      },
+      {
+        "seed": 1,
+        "ceiling_kappa": 0.48717100450851825,
+        "judge_kappa": 0.5007180960196964
+      },
+      {
+        "seed": 2,
+        "ceiling_kappa": 0.48113437074019383,
+        "judge_kappa": 0.5059797821674472
+      },
+      {
+        "seed": 3,
+        "ceiling_kappa": 0.49582540134606445,
+        "judge_kappa": 0.496191298365384
+      },
+      {
+        "seed": 4,
+        "ceiling_kappa": 0.5011563020959846,
+        "judge_kappa": 0.4989439778599496
+      },
+      {
+        "seed": 5,
+        "ceiling_kappa": 0.501610875242215,
+        "judge_kappa": 0.5086895754972232
+      },
+      {
+        "seed": 6,
+        "ceiling_kappa": 0.4833195730769487,
+        "judge_kappa": 0.5018498890397802
+      },
+      {
+        "seed": 7,
+        "ceiling_kappa": 0.5067203741077693,
+        "judge_kappa": 0.469087119771077
+      },
+      {
+        "seed": 8,
+        "ceiling_kappa": 0.5045361939212507,
+        "judge_kappa": 0.5121471325998381
+      },
+      {
+        "seed": 9,
+        "ceiling_kappa": 0.49634883477167113,
+        "judge_kappa": 0.49332161687170484
+      }
+    ]
+  }
+}

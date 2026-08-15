@@ -8,12 +8,40 @@ statistic, no confidence interval, and no way to tell whether 8.2 → 8.0 is a
 regression or noise. This project sits one layer beneath those stacks and asks
 the question they skip: *is the scorer any good, and how would you know?*
 
-> **Status: milestone 2 of 7 — statistical core only.**
-> No judges, no eval set, no LLM calls yet. See [RESULTS.md](RESULTS.md) for
-> exactly what is and is not established. This README describes what exists;
-> anything not in RESULTS.md has not been measured.
+> **Status: milestones 1–3 of 7.** Statistical core validated, an eval set with a
+> real human ceiling wired in, and one judge measured. No live judge adapters, no
+> CI gate yet. [RESULTS.md](RESULTS.md) is the source of truth — anything not in
+> it has not been measured.
 
 ---
+
+## The first result
+
+GPT-4 judging MT-Bench, measured against the ceiling of how well 65 human
+annotators agree with each other, on the 961 items that carry both (full detail
+in [RESULTS.md §3](RESULTS.md)):
+
+| | Human ceiling | GPT-4 vs human | Gap |
+|---|---|---|---|
+| Cohen's κ, ties kept | 0.499 [0.454, 0.543] | 0.474 [0.428, 0.518] | +0.026 [−0.024, +0.072] |
+| Cohen's κ, ties dropped | 0.728 [0.667, 0.780] | 0.750 [0.689, 0.802] | −0.022 [−0.081, +0.038] |
+
+Three things fall out, and the second and third are the ones you will not find in
+the write-ups this replicates:
+
+1. **The judge is indistinguishable from the human ceiling** — no gap interval
+   excludes zero. That reproduces the MT-Bench paper's headline, with the
+   intervals it did not report.
+2. **The ceiling is low.** Human–human κ ≈ 0.50. "As good as a human" here partly
+   means humans do not agree with each other much, and no judge can be shown to
+   beat a measurement that noisy.
+3. **Tie handling moves the number more than the judge does.** Dropping ties
+   removes 43% of items and moves κ from 0.50 to 0.73 — an order of magnitude
+   more than the judge–human gap. The biggest driver of a reported agreement
+   score on this dataset is a preprocessing choice.
+
+Position bias, measured over all 2,400 judged items: **15.8% [14.4%, 17.3%]** of
+GPT-4's verdicts flip when the two responses are swapped.
 
 ## Why this instead of RAGAS / DeepEval / promptfoo
 
@@ -105,22 +133,30 @@ holm([0.03, 0.2, 0.4], labels=["position", "verbosity", "self_pref"]).significan
 
 | # | Milestone | State |
 |---|---|---|
-| 1 | Eval set + human labels (≥2 annotators on a subset, for the ceiling) | not started |
-| 2 | Judge adapters + metrics core | **core done** |
-| 3 | Judge–human agreement vs the human–human ceiling | not started |
-| 4 | Bias probes: position, verbosity, self-preference, formatting | not started |
+| 1 | Eval set with a human ceiling (MT-Bench, 65 annotators) | **done** |
+| 2 | Metrics core, validated by simulation | **done** |
+| 3 | Judge–human agreement vs the human–human ceiling | **done** |
+| 4 | Bias probes: position ✅, verbosity, self-preference, formatting | position done |
 | 5 | Slicing + power analysis | not started |
 | 6 | Regression gate wired into CI | not started |
-| 7 | Docker, architecture diagram, limitations | not started |
+| 7 | Live judge adapters, Docker, architecture diagram | not started |
 
-Milestones 1–3 alone constitute a defensible project; they ship before 4 begins.
+Milestone 1 was originally scoped as hand-annotating ~400 items. MT-Bench
+replaced that with 3,355 votes from 65 annotators — and removed the
+annotator-fatigue and self-anchoring failure modes that self-labelling would have
+introduced, since the person building the harness would also have been the person
+generating its ground truth.
 
 ## Limitations
 
-Listed in full in [RESULTS.md §5](RESULTS.md). The two that matter most today:
-kappa confidence intervals under-cover at small n (92.6% measured against a
-nominal 95%), and no judge has been evaluated, so this repository currently
-supports **no claim about any LLM's agreement with humans.**
+Listed in full in [RESULTS.md §6](RESULTS.md). The three that matter most:
+
+- **One judge, one dataset, one task format.** GPT-4 on pairwise preference.
+  Nothing here generalises to other judges or rubrics without re-measuring.
+- The judge verdicts are as released in 2023, so this is a fixed historical
+  artefact rather than a live benchmark of any current model.
+- Kappa confidence intervals under-cover at small n (92.6% measured against a
+  nominal 95%), so small-set kappa intervals here are approximate.
 
 ## License
 
